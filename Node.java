@@ -33,7 +33,7 @@ public class Node{
 	int numConnection = 0;
 
 	//Tree to store all the blocks heard by the Node so far
-
+	TreeNode<Block> bTree;		//root added at node initialization
 
 	//Default constructor
 	Node(String uID, boolean type, Timestamp creationTime, Block genesisBlock){
@@ -42,6 +42,7 @@ public class Node{
 		this.creationTime = creationTime;
 		this.currOwned = 50;
 		this.genesisBlock = genesisBlock;
+		this.bTree = new TreeNode<Block>(genesisBlock);
 	}
 
 	//function to generate a transaction
