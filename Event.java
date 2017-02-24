@@ -2,11 +2,11 @@ import java.sql.Timestamp;
 
 public class Event implements Comparable<Event>{
 
-	//eventType is receiveBlock = 1, generateBlock = 2, receiveTransaction & forwardTransaction = 3, generateTransaction = 4.
+	//eventType is receiveBlock = 1, generateBlock = 2, receiveTransaction = 3, generateTransaction = 4.
 	private int eventType;
 	private Block eventBlock = null;
 	private int senderNum; 	//id of the node which forwards this transaction
-	private int receiverNum; //id of the receiver to whom it is sent
+	private int receiverNum;
 	private Transaction eventTransaction = null;
 	private Timestamp eventTimestamp = null;
 	private boolean executed = false;

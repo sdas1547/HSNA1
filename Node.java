@@ -30,18 +30,14 @@ public class Node{
 	int numSentTxn = 0;
 
 	//Connection Details
-	private ArrayList<Node> connectedNode = new ArrayList<Node>();
-	private int numConnection = 0;
+	LinkedList<Node> connectedNode = new LinkedList<Node>();
+	int numConnection = 0;
 
 	//Tree to store all the blocks heard by the Node so far
-<<<<<<< HEAD
+	TreeNode<Block> bTree;		//root added at node initialization
 
 	//HashMap to store all the transactions forwarded by the node.
 	HashMap<String, Boolean> forwardedMessage = new HashMap<String, Boolean>();
-
-=======
-	TreeNode<Block> bTree;		//root added at node initialization
->>>>>>> f3fedf8eb922350ff660127aeb0789bf08f2d9ac
 
 	//Default constructor
 	Node(String uID, boolean type, Timestamp creationTime, Block genesisBlock){
@@ -104,7 +100,7 @@ public class Node{
 	
 	//function to generate a transaction
 	Transaction generateTxn(String receiverID, float txnAmount, Timestamp txnTime){
-		String txnID = uID +"->"+receiverID+ "_" + numSentTxn;
+		String txnID = uID + "_" + numSentTxn;
 		Transaction newTxn = new Transaction(txnID, uID, receiverID, txnAmount, txnTime);
 		return newTxn;
 	}
@@ -149,7 +145,7 @@ public class Node{
 
 	//Add Node to connected Nodes
 	void addNode(Node newNode){
-		connectedNode.add(numConnection,newNode);
+		connectedNode.add(newNode);
 		numConnection++;
 	}
 
