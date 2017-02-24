@@ -2,10 +2,11 @@ import java.sql.Timestamp;
 
 public class Event implements Comparable<Event>{
 
-	//eventType is receiveBlock = 1, generateBlock = 2, receiveTransaction = 3, generateTransaction = 4.
+	//eventType is receiveBlock = 1, generateBlock = 2, receiveTransaction & forwardTransaction = 3, generateTransaction = 4.
 	private int eventType;
 	private Block eventBlock = null;
-	private int receiverNum;
+	private int senderNum; 	//id of the node which forwards this transaction
+	private int receiverNum; //id of the receiver to whom it is sent
 	private Transaction eventTransaction = null;
 	private Timestamp eventTimestamp = null;
 	private boolean executed = false;
@@ -23,11 +24,12 @@ public class Event implements Comparable<Event>{
 		this.eventTimestamp = eventTimestamp;
 	}
 
-	Event(int eventType, Transaction eventTransaction, Timestamp eventTimestamp, int receiverNum){
+	Event(int eventType, Transaction eventTransaction, Timestamp eventTimestamp, int receiverNum, int senderNum){
 		this.eventType = eventType;
 		this.eventTransaction = eventTransaction;
 		this.eventTimestamp = eventTimestamp;
 		this.receiverNum = receiverNum;
+		this.senderNum = senderNum;
 	}
 
 	//Creating a function to compare events
@@ -43,6 +45,15 @@ public class Event implements Comparable<Event>{
 		}
 	}
 
+	//function to update senderNum
+	public void updateSender(int newSenderNum){
+		this.senderNum = newSenderNum;
+	}
+
+	//function to update receiverNum
+	public void updateReceiver(int newReceiverNum){
+		this.receiverNum = newReceiverNum;
+	}
 
 	//function to retrieve event timestamp
 	public Timestamp getEventTimestamp(){
@@ -73,7 +84,13 @@ public class Event implements Comparable<Event>{
 		this.executed = true;
 	}
 
+	//return id of the node to whom it is forwarded
 	public int getReceiverNum(){
 		return receiverNum;
+	}
+
+	//id of the node which forwarded this
+	public int getSenderNum(){
+		return senderNum;
 	}
 }

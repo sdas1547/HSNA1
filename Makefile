@@ -1,6 +1,8 @@
 all:
-	javac checker.java
 	javac Transaction.java
 	javac Node.java
+	javac Event.java
+	javac Block.java
+	javac Simulator.java	
 clean:
 	rm *.class

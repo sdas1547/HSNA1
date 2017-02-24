@@ -39,20 +39,82 @@ public class Simulator{
 			nodeList.add(i,newNode);
 		}
 
+		//to create a connencted graph with each node connected to a random number of other nodes
+		Boolean[][] connectionArray = new Boolean[numPeers][numPeers];
+		for(int i = 0; i<numPeers; i++){
+			for(int j = 0; j<numPeers; j++){
+				connectionArray[i][j]=false;
+			}
+		}
+		Random connRand = new Random(System.nanoTime());
+		int n1Num = connRand.nextInt(numPeers);
+		int numNode = 0;
+		Boolean[] tempConnection = new Boolean[numPeers];
+		for(int i = 0; i<numPeers; i++){
+			tempConnection[i] = false;
+		}
+		
+		tempConnection[n1Num] = true;
+		int newNum = connRand.nextInt(numPeers);
+		while(tempConnection[newNum]){
+			newNum = connRand.nextInt(numPeers);
+		}
+		tempConnection[newNum] = true;
+		connectionArray[n1Num][newNum] = true;
+		connectionArray[newNum][n1Num] = true;
+		numNode++;
+
+		while (numNode <= numPeers){
+			newNum = connRand.nextInt(numPeers);
+			while(tempConnection[newNum]){
+				newNum = connRand.nextInt(numPeers);
+			}
+			int oldNum = connRand.nextInt(numPeers);
+			while(!tempConnection[oldNum]){
+				oldNum = connRand.nextInt(numPeers);
+			}
+
+			connectionArray[oldNum][newNum] = true;
+			connectionArray[newNum][oldNum] = true;
+			numNode++;
+		}
+
+		int maxRemainingEdges = ((numPeers-1)*(numPeers-2))/2;
+		int remainingEdges = connRand.nextInt()%maxRemainingEdges;
+		while(remainingEdges>0){
+			int i = connRand.nextInt(numPeers);
+			int j = connRand.nextInt(numPeers);
+			if(!connectionArray[i][j]){
+				connectionArray[i][j] = true;
+				connectionArray[j][i] = true;
+				remainingEdges--;
+			}
+		}
+
 		//Creating a 2D array to store Propagation delay between each pair of nodes
 		Double[][] propagationDelay  = new Double[numPeers][numPeers];
 		Random randProp = new Random(System.nanoTime());
-		for(int i=0; i<numPeers; i++){
+		for(int i=0; i<numPeers; i++){			
 			for(int j=0; j<numPeers; j++){
-				if(i<=j){
-					double propDelay = minPropDelay + randProp.nextDouble()*(maxPropDelay - minPropDelay);
-					propagationDelay[i][j] = propDelay;
+				if(i<=j){					
+					boolean makeConnection = connectionArray[i][j];
+					if(makeConnection){
+						nodeList.get(i).addNode(nodeList.get(j));
+						double propDelay = minPropDelay + randProp.nextDouble()*(maxPropDelay - minPropDelay);
+						propagationDelay[i][j] = propDelay;
+					}
+					
 				}
 				else{
-					propagationDelay[i][j] = propagationDelay[j][i];
+					//To mantain the symmetry of the propagation delay
+					if(propagationDelay[j][i]!= null){
+						nodeList.get(i).addNode(nodeList.get(j));
+						propagationDelay[i][j] = propagationDelay[j][i];	
+					}					
 				}
 				
 			}
+			// System.out.println("Number of connected nodes of "+i+ "is" + );
 		}
 
 		//Creating a array to store the bottle neck link between each pair of nodes
@@ -79,7 +141,7 @@ public class Simulator{
 		Double[] txnMean = new Double[numPeers];
 		Random randMean = new Random(System.nanoTime());
 		for(int i=0; i<numPeers; i++){
-			double tempTxnMean = 10 + randMean.nextDouble()*1;
+			double tempTxnMean = 1 + randMean.nextDouble()*1;
 			txnMean[i] = tempTxnMean;
 		}
 
@@ -91,7 +153,7 @@ public class Simulator{
 		//Priority Queue of events executed so far
 		PriorityQueue<Event> finishedEvents = new PriorityQueue<Event>();
 
-		long simTime = 1000*200;
+		long simTime = 1000*10;
 		Timestamp currTime = new Timestamp(System.currentTimeMillis());
 		Timestamp startTime = currTime;
 		long currTimeOffset = currTime.getTime();
@@ -133,13 +195,44 @@ public class Simulator{
 				}
 				else if(nextEvent.getEventType()==3){
 
-					//Code to execute receive Transaction
-					Transaction newTxn = nextEvent.getEventTransaction();
+					//Code to execute receive Transaction					
 					int receiverNum = nextEvent.getReceiverNum();
-					boolean addReceiveSuccess = nodeList.get(receiverNum).addTxn(newTxn);
+					int senderNum = nextEvent.getSenderNum();
+					Node tempSenderNode = nodeList.get(receiverNum);
+					Transaction newTxn = nextEvent.getEventTransaction();
+					String newTxnID = newTxn.getTxnID();
+					if(!(tempSenderNode.checkForwarded(newTxnID))){//Only execute if it has not already forwarded the same transaction earlier
+												
+						int txnReceiverNum = Integer.parseInt((newTxn.getReceiverID()).split("_")[1]);
+						System.out.print("Transaction Id "+ newTxnID+" Money receiver :"+txnReceiverNum+" "+"Message Receiver :"+receiverNum);
+						if(txnReceiverNum == receiverNum){ //checking the transaction is meant for that node or not
+							boolean addReceiveSuccess = nodeList.get(receiverNum).addTxn(newTxn);							
+						}
+
+						System.out.println();
+						nodeList.get(receiverNum).addForwarded(newTxnID);
+						for(int i=0; i<numPeers; i++){
+							Node nextNode = tempSenderNode.getNode(i);							
+							if(nextNode == null){
+								break;
+							}							
+							else{	
+								int nextNodeNum = Integer.parseInt(nextNode.getUID().split("_")[1]);
+								if (nextNodeNum != senderNum){
+									Random queingRandom = new Random(System.nanoTime());
+									long qDelay = (long)queingRandom.nextInt(50);
+									long pDelay = Math.round(propagationDelay[receiverNum][nextNodeNum]);
+									Timestamp receiveTime = new Timestamp(nextEventTime.getTime()+ qDelay + pDelay);
+									Event newEvent = new Event(3, newTxn, receiveTime, nextNodeNum, receiverNum);
+									pendingEvents.add(newEvent);
+								}
+							}
+						}				
+						
+						//Timestamp of the next event to be executed
+						nextEventTime = nextEvent.getEventTimestamp();
+					}
 					
-					nextEventTime = nextEvent.getEventTimestamp();
-					finishedEvents.add(nextEvent);
 				}
 				else if(nextEvent.getEventType()==4){
 
@@ -148,27 +241,36 @@ public class Simulator{
 					String senderID = newTxn.getSenderID();
 					int senderNum = Integer.parseInt(senderID.split("_")[1]);
 
+					//Adding a temporary node to enhance efficiency
+					Node tempSenderNode = nodeList.get(senderNum);
+
+					//random to generate an amount for the transaction
 					Random updateRand = new Random(System.nanoTime());
-					float newAmount = updateRand.nextFloat()*nodeList.get(senderNum).getCurrOwned();
+					float newAmount = updateRand.nextFloat()*tempSenderNode.getCurrOwned();
 					newTxn.updateAmount(newAmount);
-					System.out.print("b: "+nodeList.get(senderNum).getCurrOwned()+" ");
+					System.out.print("b: "+tempSenderNode.getCurrOwned()+" ");
+
+					//Adding the transaction at the sender end.
 					boolean addTxnSuccess = nodeList.get(senderNum).addTxn(newTxn);
-					if(addTxnSuccess){
+					nodeList.get(senderNum).addForwarded(newTxn.getTxnID());
+					if(addTxnSuccess){			//proceeding only when the transaction is successfully added
 						if (newAmount!=0){
 							System.out.println(senderID + " sents " + newTxn.getAmount()+ " to " + newTxn.getReceiverID()+" a: "+ nodeList.get(senderNum).getCurrOwned());
 							for(int i=0; i<numPeers; i++){
-								Node nextNode = nodeList.get(i);
-								if(i==senderNum){
-									continue;
+								Node nextNode = tempSenderNode.getNode(i);
+								if(nextNode == null){
+									break;
 								}
 								else{
+									int nextNodeNum = Integer.parseInt(nextNode.getUID().split("_")[1]);
 									Random queingRandom = new Random(System.nanoTime());
 									long qDelay = (long)queingRandom.nextInt(50);
-									long pDelay = Math.round(propagationDelay[senderNum][i]);
+									long pDelay = Math.round(propagationDelay[senderNum][nextNodeNum]);
 									Timestamp receiveTime = new Timestamp(nextEventTime.getTime()+ qDelay + pDelay);
-									Event newEvent = new Event(3, newTxn, receiveTime, i);
+									Event newEvent = new Event(3, newTxn, receiveTime, nextNodeNum, senderNum);
 									pendingEvents.add(newEvent);
-								}
+
+								}								
 							}
 						}						
 
@@ -196,7 +298,6 @@ public class Simulator{
 					else{
 						System.out.println("Add Transaction Failed!!");
 					}	
-					//Code to generate Transaction
 				}
 				else{
 					System.out.println("Error: Wrong Eventtype Detected.");
@@ -212,8 +313,12 @@ public class Simulator{
 		// 	System.out.println(pendingEvents.poll().getEventTimestamp());
 		// }
 
+		double sum = 0;
 		for(int i=0; i<numPeers; i++){
-			System.out.println(nodeList.get(i).getCurrOwned());
+			float value = nodeList.get(i).getCurrOwned();
+			sum = sum + value;
+			System.out.println(value);
 		}
-	}	
+		System.out.println("Total :"+sum);
+	}
 }
