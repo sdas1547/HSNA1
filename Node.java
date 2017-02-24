@@ -34,10 +34,14 @@ public class Node{
 	private int numConnection = 0;
 
 	//Tree to store all the blocks heard by the Node so far
+<<<<<<< HEAD
 
 	//HashMap to store all the transactions forwarded by the node.
 	HashMap<String, Boolean> forwardedMessage = new HashMap<String, Boolean>();
 
+=======
+	TreeNode<Block> bTree;		//root added at node initialization
+>>>>>>> f3fedf8eb922350ff660127aeb0789bf08f2d9ac
 
 	//Default constructor
 	Node(String uID, boolean type, Timestamp creationTime, Block genesisBlock){
@@ -46,8 +50,58 @@ public class Node{
 		this.creationTime = creationTime;
 		this.currOwned = 50;
 		this.genesisBlock = genesisBlock;
+		this.bTree = new TreeNode<Block>(genesisBlock);
 	}
 
+	
+	public boolean addBlock(Block b){
+		TreeNode<Block> tmp;
+		tmp = bTree.findNodeByBlockID(b.getPBlockID());	//get node with block id equals previous block id
+		if(tmp!=null){
+			tmp.addChild(b);
+			return true;
+		}
+		return false;
+	}
+	
+	//called on receiving a block
+	boolean recvBlock(Block b){
+		TreeNode<Block> tmp = bTree.findNode(b);	
+		if(tmp!=null){
+			//block already in the tree
+			return false;
+		}
+		boolean added = this.addBlock(b);
+		if(!added){
+			//add only if not already in pending blocks
+			if(!this.pendingBlockRcv.contains(b)){
+				this.pendingBlockRcv.add(b);
+				this.numPendingBlockRcv++;
+			}
+		}else{
+			//check if any of the pending blocks can be added
+			addPendingBlocks();
+		}
+		return added;
+	}
+	
+	public void addPendingBlocks(){
+		TreeNode<Block> tmp;
+		boolean added;
+		for(int i=0;i<this.pendingBlockRcv.size();i++){
+			tmp = bTree.findNode(this.pendingBlockRcv.get(i));	
+			if(tmp!=null){
+				//block already in tree
+				this.pendingBlockRcv.remove(i);
+				continue;
+			}
+			added = this.addBlock(this.pendingBlockRcv.get(i));
+			if(added){
+				this.pendingBlockRcv.remove(i);
+			}
+		}
+	}
+	
 	//function to generate a transaction
 	Transaction generateTxn(String receiverID, float txnAmount, Timestamp txnTime){
 		String txnID = uID +"->"+receiverID+ "_" + numSentTxn;
