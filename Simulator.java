@@ -12,6 +12,7 @@ public class Simulator{
 
 		double minPropDelay = 10;
 		double maxPropDelay = 500;
+		double qDelayParameter = 1;
 		ArrayList<Node> nodeList = new ArrayList<Node>();
 
 		//List to store all the accepted blockchain so far
@@ -121,10 +122,12 @@ public class Simulator{
 		Double[][] bottleNeck = new Double[numPeers][numPeers];
 		for(int i=0; i<numPeers; i++){
 			for(int j=0; j<numPeers; j++){
-				if(nodeList.get(i).getType() && nodeList.get(j).getType())
-					bottleNeck[i][j] = 100.0;
-				else
-					bottleNeck[i][j] = 5.0;
+				if(connectionArray[i][j]){
+					if(nodeList.get(i).getType() && nodeList.get(j).getType())
+						bottleNeck[i][j] = 100.0;
+					else
+						bottleNeck[i][j] = 5.0;
+				}								
 			}
 		}
 
@@ -141,8 +144,8 @@ public class Simulator{
 		Double[] txnMean = new Double[numPeers];
 		Random randMean = new Random(System.nanoTime());
 		for(int i=0; i<numPeers; i++){
-			double tempTxnMean = 1 + randMean.nextDouble()*1;
-			txnMean[i] = tempTxnMean;
+			double tempTxnMean = 100 + randMean.nextDouble()*50;
+			txnMean[i] = 1/tempTxnMean;
 		}
 
 
@@ -160,11 +163,20 @@ public class Simulator{
 		Timestamp maxTime = new Timestamp(currTimeOffset + (long)(Math.random()*simTime));
 
 		for(int i=0; i<numPeers; i++){
-			long nextTxnLong = (long)(10000*txnMean[i]);
-			Timestamp nextTxnTime = new Timestamp(currTimeOffset + (long)(Math.random()*nextTxnLong));
+
+			// long nextTxnLong = (long)(10000*txnMean[i]);
+			Random randNext = new Random();
+			double nextTimeOffset = randNext.nextDouble();
+			while (nextTimeOffset == 0.0){
+				nextTimeOffset = randNext.nextFloat();
+			}
+			// System.out.println(nextTimeOffset);
+			double nextTimeGap = -1*Math.log(nextTimeOffset)/txnMean[i];
+			// System.out.println(nextTimeGap);
+			Timestamp nextTxnTime = new Timestamp(currTimeOffset + (long)nextTimeGap*100);
+			// System.out.println(nextTxnTime);
 			nodeList.get(i).nextTxnTime = nextTxnTime;
 			// System.out.println(nextTxnTime);
-			//
 			Random receiveRand = new Random(System.nanoTime());
 			int rcvNum = receiveRand.nextInt(numPeers);
 			while(rcvNum == i){
@@ -181,7 +193,7 @@ public class Simulator{
 		//Timestamp of the next event to be executed
 		Timestamp nextEventTime = pendingEvents.peek().getEventTimestamp();
 		Iterator<Event> eventItr = pendingEvents.iterator();
-
+		// System.out.println("first Event time : "+nextEventTime );
 		while(nextEventTime.before(maxTime)){			
 			if(eventItr.hasNext()){
 				Event nextEvent = pendingEvents.poll();
@@ -219,8 +231,14 @@ public class Simulator{
 							else{	
 								int nextNodeNum = Integer.parseInt(nextNode.getUID().split("_")[1]);
 								if (nextNodeNum != senderNum){
+
 									Random queingRandom = new Random(System.nanoTime());
-									long qDelay = (long)queingRandom.nextInt(50);
+									double qDelayP1 = queingRandom.nextDouble();
+									while (qDelayP1 == 0.0){
+										qDelayP1 = queingRandom.nextFloat();
+									}
+									long qDelay = (long)((-1*Math.log(qDelayP1)*bottleNeck[senderNum][receiverNum])/qDelayParameter);
+									// System.out.println(qDelay);
 									long pDelay = Math.round(propagationDelay[receiverNum][nextNodeNum]);
 									Timestamp receiveTime = new Timestamp(nextEventTime.getTime()+ qDelay + pDelay);
 									Event newEvent = new Event(3, newTxn, receiveTime, nextNodeNum, receiverNum);
@@ -263,8 +281,13 @@ public class Simulator{
 								}
 								else{
 									int nextNodeNum = Integer.parseInt(nextNode.getUID().split("_")[1]);
+
 									Random queingRandom = new Random(System.nanoTime());
-									long qDelay = (long)queingRandom.nextInt(50);
+									float qDelayP1 = queingRandom.nextFloat();
+									while (qDelayP1 == 0.0){
+										qDelayP1 = queingRandom.nextFloat();
+									}
+									long qDelay = (long)((-1*Math.log(qDelayP1)*bottleNeck[senderNum][nextNodeNum])/qDelayParameter);
 									long pDelay = Math.round(propagationDelay[senderNum][nextNodeNum]);
 									Timestamp receiveTime = new Timestamp(nextEventTime.getTime()+ qDelay + pDelay);
 									Event newEvent = new Event(3, newTxn, receiveTime, nextNodeNum, senderNum);
@@ -275,8 +298,14 @@ public class Simulator{
 						}						
 
 						//to Generate the next transaction for the sending node
-						long nextTxnLong = (long)(10000*txnMean[senderNum]);
-						Timestamp nextTxnTime = new Timestamp(nextEventTime.getTime() + (long)(Math.random()*nextTxnLong));
+						Random randNext = new Random();
+						double nextTimeOffset = randNext.nextDouble();
+						while (nextTimeOffset == 0.0){
+							nextTimeOffset = randNext.nextFloat();
+						}
+						double nextTimeGap = -1*Math.log(nextTimeOffset)/txnMean[senderNum];
+						Timestamp nextTxnTime = new Timestamp(currTimeOffset + (long)nextTimeGap*1000);
+
 						nodeList.get(senderNum).nextTxnTime = nextTxnTime;
 						// System.out.println(nextTxnTime);
 						Random receiveRand = new Random(System.nanoTime());
@@ -294,6 +323,7 @@ public class Simulator{
 
 						//Updating the time to execute next evnet
 						nextEventTime = pendingEvents.peek().getEventTimestamp();
+						// System.out.println(nextEventTime);
 					}
 					else{
 						System.out.println("Add Transaction Failed!!");

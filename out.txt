@@ -1,0 +1,147 @@
+0.48161631758411694
+94.82949988697203
+2017-02-25 12:26:31.395
+0.8372417148303153
+21.353674075895
+2017-02-25 12:26:24.095
+0.6805538306728421
+53.84597917850277
+2017-02-25 12:26:27.295
+first Event time : 2017-02-25 12:26:24.095
+2017-02-25 12:26:24.185
+Transaction Id Node_1_0 Money receiver :0 Message Receiver :2
+12
+Transaction Id Node_1_0 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:24.719
+Transaction Id Node_2_0 Money receiver :0 Message Receiver :1
+Transaction Id Node_2_0 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:25.16
+Transaction Id Node_1_1 Money receiver :2 Message Receiver :2Added!!
+1
+Transaction Id Node_1_1 Money receiver :2 Message Receiver :0
+2017-02-25 12:26:26.037
+Transaction Id Node_0_0 Money receiver :1 Message Receiver :2
+2
+Transaction Id Node_0_0 Money receiver :1 Message Receiver :1Added!!
+2017-02-25 12:26:26.564
+Transaction Id Node_0_1 Money receiver :2 Message Receiver :2Added!!
+5
+Transaction Id Node_0_1 Money receiver :2 Message Receiver :1
+2017-02-25 12:26:26.736
+Transaction Id Node_1_2 Money receiver :2 Message Receiver :2Added!!
+5
+Transaction Id Node_1_2 Money receiver :2 Message Receiver :0
+2017-02-25 12:26:27.262
+Transaction Id Node_2_1 Money receiver :0 Message Receiver :1
+Transaction Id Node_2_1 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:21.995
+2017-02-25 12:26:22.079
+Transaction Id Node_2_3 Money receiver :0 Message Receiver :1
+Transaction Id Node_2_3 Money receiver :0 Message Receiver :0Added!!
+Transaction Id Node_2_2 Money receiver :1 Message Receiver :1Added!!
+Transaction Id Node_2_2 Money receiver :1 Message Receiver :0
+2017-02-25 12:26:27.995
+2017-02-25 12:26:28.081
+Transaction Id Node_1_4 Money receiver :0 Message Receiver :2
+3
+Transaction Id Node_1_3 Money receiver :2 Message Receiver :2Added!!
+10
+Transaction Id Node_1_4 Money receiver :0 Message Receiver :0Added!!
+Transaction Id Node_1_3 Money receiver :2 Message Receiver :0
+2017-02-25 12:26:28.623
+Transaction Id Node_1_5 Money receiver :2 Message Receiver :2Added!!
+0
+Transaction Id Node_1_5 Money receiver :2 Message Receiver :0
+2017-02-25 12:26:29.143
+Transaction Id Node_1_6 Money receiver :0 Message Receiver :2
+11
+Transaction Id Node_1_6 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:27.995
+2017-02-25 12:26:28.085
+Transaction Id Node_1_8 Money receiver :2 Message Receiver :2Added!!
+3
+Transaction Id Node_1_8 Money receiver :2 Message Receiver :0
+Transaction Id Node_1_7 Money receiver :2 Message Receiver :2Added!!
+20
+Transaction Id Node_1_7 Money receiver :2 Message Receiver :0
+2017-02-25 12:26:29.068
+Transaction Id Node_1_9 Money receiver :0 Message Receiver :2
+2
+Transaction Id Node_1_9 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:29.594
+Transaction Id Node_1_10 Money receiver :2 Message Receiver :2Added!!
+13
+Transaction Id Node_1_10 Money receiver :2 Message Receiver :0
+2017-02-25 12:26:22.995
+2017-02-25 12:26:23.085
+Transaction Id Node_1_12 Money receiver :0 Message Receiver :2
+3
+Transaction Id Node_1_12 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:23.612
+Transaction Id Node_1_13 Money receiver :0 Message Receiver :2
+0
+Transaction Id Node_1_13 Money receiver :0 Message Receiver :0Added!!
+Transaction Id Node_1_11 Money receiver :0 Message Receiver :2
+1
+Transaction Id Node_1_11 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:24.571
+Transaction Id Node_1_14 Money receiver :2 Message Receiver :2Added!!
+3
+Transaction Id Node_1_14 Money receiver :2 Message Receiver :0
+2017-02-25 12:26:25.094
+Transaction Id Node_1_15 Money receiver :0 Message Receiver :2
+8
+Transaction Id Node_1_15 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:25.624
+Transaction Id Node_1_16 Money receiver :0 Message Receiver :2
+2
+Transaction Id Node_1_16 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:26.151
+Transaction Id Node_1_17 Money receiver :0 Message Receiver :2
+4
+Transaction Id Node_1_17 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:26.681
+Transaction Id Node_1_18 Money receiver :2 Message Receiver :2Added!!
+9
+Transaction Id Node_1_18 Money receiver :2 Message Receiver :0
+2017-02-25 12:26:27.213
+Transaction Id Node_1_19 Money receiver :0 Message Receiver :2
+7
+Transaction Id Node_1_19 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:27.741
+Transaction Id Node_2_4 Money receiver :0 Message Receiver :1
+Transaction Id Node_2_4 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:28.177
+Transaction Id Node_2_5 Money receiver :1 Message Receiver :1Added!!
+Transaction Id Node_2_5 Money receiver :1 Message Receiver :0
+2017-02-25 12:26:28.626
+Transaction Id Node_2_6 Money receiver :1 Message Receiver :1Added!!
+Transaction Id Node_2_6 Money receiver :1 Message Receiver :0
+2017-02-25 12:26:29.065
+Transaction Id Node_2_7 Money receiver :1 Message Receiver :1Added!!
+Transaction Id Node_2_7 Money receiver :1 Message Receiver :0
+2017-02-25 12:26:29.514
+Transaction Id Node_2_8 Money receiver :0 Message Receiver :1
+Transaction Id Node_2_8 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:29.946
+Transaction Id Node_2_9 Money receiver :0 Message Receiver :1
+Transaction Id Node_2_9 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:30.388
+Transaction Id Node_2_10 Money receiver :1 Message Receiver :1Added!!
+Transaction Id Node_2_10 Money receiver :1 Message Receiver :0
+2017-02-25 12:26:30.837
+Transaction Id Node_2_11 Money receiver :1 Message Receiver :1Added!!
+Transaction Id Node_2_11 Money receiver :1 Message Receiver :0
+2017-02-25 12:26:26.995
+2017-02-25 12:26:27.079
+Transaction Id Node_2_13 Money receiver :1 Message Receiver :1Added!!
+Transaction Id Node_2_13 Money receiver :1 Message Receiver :0
+Transaction Id Node_2_12 Money receiver :0 Message Receiver :1
+Transaction Id Node_2_12 Money receiver :0 Message Receiver :0Added!!
+2017-02-25 12:26:31.72
+Transaction Id Node_2_14 Money receiver :1 Message Receiver :1Added!!
+Transaction Id Node_2_14 Money receiver :1 Message Receiver :0
+144.96346
+5.0364857
+4.708337E-5
+Total :149.99998795556166
