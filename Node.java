@@ -1,6 +1,7 @@
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Node{
 
@@ -34,6 +35,9 @@ public class Node{
 
 	//Tree to store all the blocks heard by the Node so far
 	TreeNode<Block> bTree;		//root added at node initialization
+
+	//HashMap to store all the transactions forwarded by the node.
+	HashMap<String, Boolean> forwardedMessage = new HashMap<String, Boolean>();
 
 	//Default constructor
 	Node(String uID, boolean type, Timestamp creationTime, Block genesisBlock){
@@ -126,14 +130,14 @@ public class Node{
 		}
 		else if(newTxn.getReceiverID().equals(this.uID)){
 			//Add to receivedTxn ArrayList
+			System.out.print("Added!!");
 			receivedTxn.add(numReceivedTxn, newTxn);
 			currOwned = currOwned + newTxn.getAmount();
 			numReceivedTxn++;
 			return true;
 		}
 		else{
-			receivedTxn.add(numReceivedTxn, newTxn);
-			numReceivedTxn++;
+
 			return true;
 		}
 	}
@@ -150,18 +154,6 @@ public class Node{
 	void addNode(Node newNode){
 		connectedNode.add(newNode);
 		numConnection++;
-	}
-
-	//Deleting Node from connected Nodes
-	boolean removeNode(Node newNode){
-		boolean success = connectedNode.remove(newNode);
-		if(success){
-			numConnection--;
-			return true;
-		}
-		else{
-			return false;
-		}
 	}
 
 	//userID return
@@ -192,5 +184,23 @@ public class Node{
 	//overwritting toString method for Node
 	public String toString(){
 		return "ID: "+this.uID+" type: "+ (this.type?"fast":"lazy") + " Creation time: "+this.creationTime  + " Balance: "+this.currOwned;
+	}
+
+	public Node getNode(int index){
+		if(index >= numConnection){
+			return null;
+		}
+		else{
+			return connectedNode.get(index);
+		}		
+	}
+
+	//Function to check given a transactionID whether that is already being forwarded or not
+	public boolean checkForwarded(String newID){
+		return (forwardedMessage.containsKey(newID));		
+	}
+
+	public void addForwarded(String newID){
+		this.forwardedMessage.put(newID, true);
 	}
 }
