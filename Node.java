@@ -43,6 +43,8 @@ public class Node{
 		this.currOwned = 50;
 		this.genesisBlock = genesisBlock;
 		this.bTree = new TreeNode<Block>(genesisBlock);
+		this.longestSoFar = genesisBlock;
+		this.longestLength = 0;
 	}
 
 	
@@ -51,6 +53,11 @@ public class Node{
 		tmp = bTree.findNodeByBlockID(b.getPBlockID());	//get node with block id equals previous block id
 		if(tmp!=null){
 			tmp.addChild(b);
+			//maintaining longest block chain last block
+			if(tmp.level == this.longestLength){
+				this.longestSoFar = b;
+				this.longestLength++;
+			}
 			return true;
 		}
 		return false;

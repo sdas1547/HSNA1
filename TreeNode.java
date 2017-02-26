@@ -12,16 +12,19 @@ public class TreeNode<T> {
 	public TreeNode<T> parent = null;
 	public List<TreeNode<T>> children = new ArrayList<TreeNode<T>>();
     public T data = null;
-
+    public int level = 0;		//level for getting to the longest chain. Indicates number of blokcs before this block
+    
     public TreeNode(T data) {
         this.data = data;
         this.parent = null;
+        this.level = 0;
     }
 
     public TreeNode(T data, TreeNode<T> parent) {
         this.data = data;
         this.parent = parent;
         parent.children.add(this);
+        this.level = parent.level+1;
     }
 
     public List<TreeNode<T>> getChildren() {
@@ -31,6 +34,7 @@ public class TreeNode<T> {
     public void setParent(TreeNode<T> parent) {
         parent.addChild(this);
         this.parent = parent;
+        this.level = parent.level+1;
     }
 
     public void addChild(T data) {

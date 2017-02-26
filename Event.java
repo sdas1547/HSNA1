@@ -10,6 +10,9 @@ public class Event implements Comparable<Event>{
 	private Timestamp eventTimestamp = null;
 	private boolean executed = false;
 
+	//extras
+	public Node eventAtNode = null;		//indicates event occurs at which node
+
 	//constructors to create various types of events
 	Event(int eventType, Block eventBlock, Timestamp eventTimestamp){
 		this.eventType = eventType;

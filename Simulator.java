@@ -100,26 +100,33 @@ public class Simulator{
 		for(int i=0; i<numPeers; i++){
 			long nextTxnLong = (long)(10000*txnMean[i]);
 			Timestamp nextTxnTime = new Timestamp(currTimeOffset + (long)(Math.random()*nextTxnLong));
-			nodeList.get(i).nextTxnTime = nextTxnTime;
+			nodeList.get(i).nextTxnTime = nextTxnTime;	//time when they generate next transaction
 			// System.out.println(nextTxnTime);
 			//
 			Random receiveRand = new Random(System.nanoTime());
 			int rcvNum = receiveRand.nextInt(numPeers);
 			while(rcvNum == i){
-				rcvNum = receiveRand.nextInt(numPeers);
+				rcvNum = receiveRand.nextInt(numPeers);	//choosing a random peer to pay amount to
 			}
 			//System.out.println(rcvNum);
 			String receiverID = nodeList.get(rcvNum).getUID();
-			float receivedAmount = 0 ;
+			float receivedAmount = 0 ;				//todo choose random amount to pay
 			Transaction newTransaction = nodeList.get(i).generateTxn(receiverID, receivedAmount, nextTxnTime);
 			Event newEvent = new Event(4, newTransaction, nextTxnTime);
+			newEvent.eventAtNode = nodeList.get(i);
+
 			pendingEvents.add(newEvent);
 		}
 
 		//Timestamp of the next event to be executed
+		if(pendingEvents.peek() == null){
+			System.out.println("Panic: No nodes in the Bitcoin System!\nExiting...");
+			System.exit(-1);
+		}
 		Timestamp nextEventTime = pendingEvents.peek().getEventTimestamp();
 		Iterator<Event> eventItr = pendingEvents.iterator();
 
+		//while the nextEventTime is before the maximum Simulation time, go
 		while(nextEventTime.before(maxTime)){			
 			if(eventItr.hasNext()){
 				Event nextEvent = pendingEvents.poll();
@@ -127,9 +134,29 @@ public class Simulator{
 
 				if(nextEvent.getEventType()==1){
 					//Code to execute receive Block event
+					Node ntmp = nextEvent.eventAtNode;
+					Block btmp = nextEvent.getEventBlock();
+					if(ntmp == null || btmp==null){
+						System.out.println("Panic: Node or Block for the `receive block event` not defined!");
+						continue;
+					}
+					ntmp.recvBlock(btmp);
+//					finishedEvents.add(nextEvent);
 				}
 				else if(nextEvent.getEventType()==2){
 					//Code to execute generate Block
+					/**
+					*	1. decide previous block from the longest chain - longestSoFar
+					*	2. Build a block on it - Get all pending transactions and form a block
+					*/
+					Node ntmp = nextEvent.eventAtNode;
+					Block btmp = nextEvent.getEventBlock();
+					if(ntmp == null || btmp==null){
+						System.out.println("Panic: Node or Block for the `generate block event` not defined!");
+						continue;
+					}
+					
+					
 				}
 				else if(nextEvent.getEventType()==3){
 
@@ -139,7 +166,7 @@ public class Simulator{
 					boolean addReceiveSuccess = nodeList.get(receiverNum).addTxn(newTxn);
 					
 					nextEventTime = nextEvent.getEventTimestamp();
-					finishedEvents.add(nextEvent);
+					finishedEvents.add(nextEvent);				//todo : bug alert
 				}
 				else if(nextEvent.getEventType()==4){
 
@@ -155,7 +182,7 @@ public class Simulator{
 					boolean addTxnSuccess = nodeList.get(senderNum).addTxn(newTxn);
 					if(addTxnSuccess){
 						if (newAmount!=0){
-							System.out.println(senderID + " sents " + newTxn.getAmount()+ " to " + newTxn.getReceiverID()+" a: "+ nodeList.get(senderNum).getCurrOwned());
+							System.out.println(senderID + " sends " + newTxn.getAmount()+ " to " + newTxn.getReceiverID()+" a: "+ nodeList.get(senderNum).getCurrOwned());
 							for(int i=0; i<numPeers; i++){
 								Node nextNode = nodeList.get(i);
 								if(i==senderNum){
